@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dehouse automation — Affordable Smart Home & Office Automation</title>
+  <meta name="description" content="Affordable and flexible smart home automation for small homes and offices. Lighting, locks, cameras, energy monitoring and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --surface: #ffffff;
+      --surface-soft: #f1f3f6;
+      --text: #1a1d23;
+      --text-muted: #6b7280;
+      --blue: #3b82f6;
+      --blue-soft: #60a5fa;
+      --blue-light: #eff6ff;
+      --blue-dark: #2563eb;
+      --border: #e5e7eb;
+      --shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+      --radius: 16px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ========== MOTION BACKGROUND ========== */
+    .bg-motion {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 40%, #eef2ff 100%);
+    }
+
+    .bg-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.45;
+      animation: float 18s ease-in-out infinite;
+    }
+
+    .bg-blob-1 {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, #93c5fd 0%, transparent 70%);
+      top: -120px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-blob-2 {
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, #bfdbfe 0%, transparent 70%);
+      bottom: 10%;
+      right: -80px;
+      animation-delay: -6s;
+      animation-duration: 22s;
+    }
+
+    .bg-blob-3 {
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle, #dbeafe 0%, transparent 70%);
+      top: 45%;
+      left: 30%;
+      animation-delay: -12s;
+      animation-duration: 20s;
+    }
+
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 20%, transparent 100%);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -40px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.97); }
+    }
+
+    /* ========== LAYOUT ========== */
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+    }
+
+    /* ========== NAV ========== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(229, 231, 235, 0.7);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo span {
+      color: var(--blue);
+    }
+
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--blue);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.75rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.925rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--blue);
+    }
+
+    .nav-cta {
+      background: var(--blue);
+      color: white !important;
+      padding: 0.55rem 1.15rem;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .nav-cta:hover {
+      background: var(--blue-dark);
+      transform: translateY(-1px);
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.25rem;
+    }
+
+    .menu-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      margin: 5px 0;
+      border-radius: 2px;
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      position: relative;
+      padding: 6.5rem 0 5.5rem;
+      text-align: center;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(180deg, rgba(247, 248, 250, 0.72) 0%, rgba(247, 248, 250, 0.88) 55%, rgba(247, 248, 250, 0.96) 100%),
+        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80') center / cover no-repeat;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(239, 246, 255, 0.92);
+      color: var(--blue-dark);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.01em;
+      border: 1px solid rgba(59, 130, 246, 0.15);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.1rem, 5vw, 3.15rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1.1rem;
+      color: var(--text);
+    }
+
+    .hero h1 .highlight {
+      color: var(--blue);
+    }
+
+    .hero-sub {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 540px;
+      margin: 0 auto 2.25rem;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.85rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--blue-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--blue-soft);
+      color: var(--blue);
+      background: var(--blue-light);
+    }
+
+    /* ========== TRUST STRIP ========== */
+    .trust {
+      padding: 1.5rem 0 3rem;
+      text-align: center;
+    }
+
+    .trust-labels {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem 2.5rem;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .trust-labels span {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .trust-labels svg {
+      width: 16px;
+      height: 16px;
+      color: var(--blue);
+    }
+
+    /* ========== SECTION COMMON ========== */
+    section {
+      padding: 4.5rem 0;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 2.75rem;
+    }
+
+    .section-header h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.6rem;
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+    }
+
+    /* ========== PACKAGES ========== */
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.35rem;
+    }
+
+    .package-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+      box-shadow: var(--shadow);
+    }
+
+    .package-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    .package-card.active {
+      border-color: rgba(59, 130, 246, 0.35);
+    }
+
+    .package-card.active:hover {
+      border-color: var(--blue);
+    }
+
+    .package-card.coming-soon {
+      opacity: 0.78;
+    }
+
+    .package-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+    }
+
+    .badge-live {
+      background: var(--blue-light);
+      color: var(--blue-dark);
+    }
+
+    .badge-soon {
+      background: var(--surface-soft);
+      color: var(--text-muted);
+    }
+
+    .package-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+    }
+
+    .package-tag {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .package-price {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .package-price span {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .package-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      flex-grow: 0;
+    }
+
+    .package-features {
+      list-style: none;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .package-features li {
+      font-size: 0.875rem;
+      padding: 0.35rem 0;
+      padding-left: 1.4rem;
+      position: relative;
+      color: var(--text);
+    }
+
+    .package-features li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.65rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--blue-soft);
+    }
+
+    .package-card.coming-soon .package-features li::before {
+      background: #cbd5e1;
+    }
+
+    .package-cta {
+      width: 100%;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: block;
+    }
+
+    .package-cta.live {
+      background: var(--blue);
+      color: white;
+    }
+
+    .package-cta.live:hover {
+      background: var(--blue-dark);
+    }
+
+    .package-cta.soon {
+      background: var(--surface-soft);
+      color: var(--text-muted);
+      pointer-events: none;
+      cursor: default;
+    }
+
+    /* ========== VIDEO DEMO (single, triple outline) ========== */
+    .videos-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem 0 1rem;
+    }
+
+    .video-frame {
+      position: relative;
+      width: min(280px, 72vw);
+      aspect-ratio: 9 / 16;
+      border-radius: 22px;
+      background: var(--surface);
+      cursor: pointer;
+      /* Triple outline rings via layered box-shadow */
+      box-shadow:
+        0 0 0 2px rgba(59, 130, 246, 0.35),
+        0 0 0 7px rgba(255, 255, 255, 1),
+        0 0 0 9px rgba(59, 130, 246, 0.2),
+        0 0 0 14px rgba(255, 255, 255, 1),
+        0 0 0 16px rgba(59, 130, 246, 0.12),
+        0 12px 36px rgba(15, 23, 42, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .video-frame::before {
+      content: '';
+      position: absolute;
+      inset: -22px;
+      border-radius: 36px;
+      border: 1px dashed rgba(59, 130, 246, 0.18);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .video-frame:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow:
+        0 0 0 2px rgba(59, 130, 246, 0.55),
+        0 0 0 7px rgba(255, 255, 255, 1),
+        0 0 0 9px rgba(59, 130, 246, 0.32),
+        0 0 0 14px rgba(255, 255, 255, 1),
+        0 0 0 16px rgba(59, 130, 246, 0.18),
+        0 18px 44px rgba(59, 130, 246, 0.18);
+    }
+
+    .video-inner {
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .video-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #e8eef5;
+    }
+
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      background: linear-gradient(160deg, #f1f5f9 0%, #e2e8f0 100%);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    .video-placeholder.hidden {
+      display: none;
+    }
+
+    .play-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1.5px solid rgba(59, 130, 246, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px rgba(59, 130, 246, 0.2);
+      transition: transform 0.2s, background 0.2s;
+      pointer-events: none;
+    }
+
+    .video-frame:hover .play-btn {
+      transform: scale(1.1);
+      background: white;
+    }
+
+    .play-btn svg {
+      width: 20px;
+      height: 20px;
+      margin-left: 2px;
+      color: var(--blue);
+    }
+
+    .video-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.7rem 0.75rem;
+      background: linear-gradient(transparent, rgba(15, 23, 42, 0.55));
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    /* ========== REVIEWS ========== */
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.35rem;
+    }
+
+    .review-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .review-stars {
+      color: #f59e0b;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      margin-bottom: 0.75rem;
+    }
+
+    .review-text {
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 1.15rem;
+      line-height: 1.65;
+    }
+
+    .review-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .review-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .review-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .review-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ========== CTA BAND ========== */
+    .cta-band {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #e0e7ff 100%);
+      border-radius: 20px;
+      padding: 3rem 2rem;
+      text-align: center;
+      border: 1px solid rgba(59, 130, 246, 0.15);
+    }
+
+    .cta-band h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-band p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+      padding: 3rem 0 2rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .footer-brand .logo {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      max-width: 260px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-col h4 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-col a {
+      display: block;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: var(--blue);
+    }
+
+    .footer-bottom {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 1rem 1.25rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        gap: 0.75rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .hero {
+        padding: 4rem 0 3.5rem;
+      }
+
+      .packages-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Motion background -->
+  <div class="bg-motion" aria-hidden="true">
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#" class="logo">
+          dehouse <span>automation</span>
+          <span class="logo-dot"></span>
+        </a>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#packages">Packages</a></li>
+          <li><a href="#demos">Demos</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+          <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
+        </ul>
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container">
+      <div class="hero-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Affordable · Flexible · Local
+      </div>
+      <h1>
+        Smart home automation<br />
+        for <span class="highlight">small homes &amp; offices</span>
+      </h1>
+      <p class="hero-sub">
+        dehouse automation makes intelligent living simple and affordable — lighting, locks, cameras, energy control and more, tailored for Nigerian homes and workspaces.
+      </p>
+      <div class="hero-actions">
+        <a href="#packages" class="btn btn-primary">View Packages</a>
+        <a href="#contact" class="btn btn-secondary">Talk on WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust strip -->
+  <div class="trust">
+    <div class="container">
+      <div class="trust-labels">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Installed &amp; supported locally
+        </span>
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          App + voice control
+        </span>
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Power-aware scenes
+        </span>
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          WhatsApp support
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Packages -->
+  <section id="packages">
+    <div class="container">
+      <div class="section-header">
+        <h2>Simple packages, clear value</h2>
+        <p>Start small or go further — every plan is designed for real Nigerian homes and offices.</p>
+      </div>
+
+      <div class="packages-grid">
+        <!-- Starter -->
+        <article class="package-card active">
+          <span class="package-badge badge-live">Available</span>
+          <h3 class="package-name">Starter</h3>
+          <p class="package-tag">1–2 rooms · Renters &amp; small budgets</p>
+          <div class="package-price">₦145,000 <span>from</span></div>
+          <p class="package-desc">Get started with the essentials without locking into a big project.</p>
+          <ul class="package-features">
+            <li>Smart bulbs / switches</li>
+            <li>One smart plug</li>
+            <li>Smart hub</li>
+            <li>Basic voice &amp; app control</li>
+          </ul>
+          <a href="#contact" class="package-cta live">Order Starter</a>
+        </article>
+
+        <!-- Home Essentials -->
+        <article class="package-card active">
+          <span class="package-badge badge-live">Available</span>
+          <h3 class="package-name">Home Essentials</h3>
+          <p class="package-tag">Whole-home comfort &amp; security</p>
+          <div class="package-price">₦385,000 <span>from</span></div>
+          <p class="package-desc">Lighting, lock, cameras and support — the practical everyday setup.</p>
+          <ul class="package-features">
+            <li>Whole-home smart lighting</li>
+            <li>Smart door lock</li>
+            <li>1–2 cameras</li>
+            <li>Smart curtains (optional)</li>
+            <li>App + voice control</li>
+            <li>WhatsApp-based support</li>
+          </ul>
+          <a href="#contact" class="package-cta live">Order Home Essentials</a>
+        </article>
+
+        <!-- Smart Office -->
+        <article class="package-card coming-soon">
+          <span class="package-badge badge-soon">Coming Soon</span>
+          <h3 class="package-name">Smart Office / Business</h3>
+          <p class="package-tag">Access · CCTV · Energy</p>
+          <div class="package-price">—</div>
+          <p class="package-desc">Built for small offices that need control and lower power bills.</p>
+          <ul class="package-features">
+            <li>Access control</li>
+            <li>CCTV integration</li>
+            <li>Automated lighting schedules</li>
+            <li>Energy monitoring</li>
+            <li>Visitor management</li>
+          </ul>
+          <span class="package-cta soon">Coming Soon</span>
+        </article>
+
+        <!-- Custom / Premium -->
+        <article class="package-card coming-soon">
+          <span class="package-badge badge-soon">Coming Soon</span>
+          <h3 class="package-name">Custom / Premium</h3>
+          <p class="package-tag">Full integration · Power-aware</p>
+          <div class="package-price">—</div>
+          <p class="package-desc">Advanced automation that reacts to NEPA, generator and inverter state.</p>
+          <ul class="package-features">
+            <li>Full system integration</li>
+            <li>Backup power-aware scenes</li>
+            <li>Auto-switch on NEPA / gen / inverter</li>
+            <li>Multi-location for landlords</li>
+          </ul>
+          <span class="package-cta soon">Coming Soon</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video demo -->
+  <section id="demos">
+    <div class="container">
+      <div class="section-header">
+        <h2>See it in action</h2>
+        <p>Tap the frame to play. Drop in your own portrait demo clip when ready.</p>
+      </div>
+
+      <div class="videos-wrap">
+        <div class="video-frame" data-video>
+          <div class="video-inner">
+            <video playsinline preload="metadata" poster="">
+              <!-- Add your portrait video here, e.g.:
+              <source src="demo.mp4" type="video/mp4" />
+              -->
+            </video>
+            <div class="video-placeholder">
+              <div class="play-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <span>Demo video</span>
+            </div>
+            <div class="video-label">dehouse in action</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section id="reviews">
+    <div class="container">
+      <div class="section-header">
+        <h2>What customers say</h2>
+        <p>Real feedback from homes and small offices we’ve automated.</p>
+      </div>
+
+      <div class="reviews-grid">
+        <article class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">“Installed the Starter pack in my rented apartment. The bulbs and plug work perfectly with Google Home. Support on WhatsApp was fast when I had a question.”</p>
+          <div class="review-author">
+            <div class="review-avatar">TO</div>
+            <div>
+              <div class="review-name">Tunde O.</div>
+              <div class="review-meta">Lagos · Starter package</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">“Home Essentials made a big difference. Smart lock + cameras + lighting in one go. Feels premium without the crazy price tags of other companies.”</p>
+          <div class="review-author">
+            <div class="review-avatar">CA</div>
+            <div>
+              <div class="review-name">Chioma A.</div>
+              <div class="review-meta">Abuja · Home Essentials</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="review-card">
+          <div class="review-stars">★★★★☆</div>
+          <p class="review-text">“We use the lighting schedules in our small office. Looking forward to the energy monitoring package — power costs are our biggest headache.”</p>
+          <div class="review-author">
+            <div class="review-avatar">KE</div>
+            <div>
+              <div class="review-name">Kemi E.</div>
+              <div class="review-meta">Port Harcourt · Home Essentials</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="contact">
+    <div class="container">
+      <div class="cta-band">
+        <h2>Ready to make your space smarter?</h2>
+        <p>Tell us about your home or office and we’ll recommend the right starting package. Flexible, affordable, and installed with care.</p>
+        <div class="hero-actions">
+          <a href="https://wa.me/2340000000000" class="btn btn-primary" target="_blank" rel="noopener">
+            Chat on WhatsApp
+          </a>
+          <a href="mailto:hello@dehouse.automation" class="btn btn-secondary">Email us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="#" class="logo">dehouse <span>automation</span></a>
+          <p>Affordable and flexible smart home &amp; office automation for small spaces across Nigeria.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>Explore</h4>
+            <a href="#packages">Packages</a>
+            <a href="#demos">Demos</a>
+            <a href="#reviews">Reviews</a>
+          </div>
+          <div class="footer-col">
+            <h4>Contact</h4>
+            <a href="https://wa.me/2340000000000" target="_blank" rel="noopener">WhatsApp</a>
+            <a href="mailto:hello@dehouse.automation">Email</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © <span id="year"></span> dehouse automation. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const toggle = document.getElementById('menuToggle');
+    const links = document.getElementById('navLinks');
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+
+    links.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => links.classList.remove('open'));
+    });
+
+    document.querySelectorAll('[data-video]').forEach(frame => {
+      const video = frame.querySelector('video');
+      const placeholder = frame.querySelector('.video-placeholder');
+
+      frame.addEventListener('click', () => {
+        if (!video.querySelector('source') && !video.src) {
+          if (placeholder) {
+            const label = placeholder.querySelector('span');
+            if (label) label.textContent = 'Add your video source';
+          }
+          return;
+        }
+
+        if (video.paused) {
+          document.querySelectorAll('[data-video] video').forEach(v => {
+            if (v !== video) {
+              v.pause();
+              v.closest('[data-video]').querySelector('.video-placeholder')?.classList.remove('hidden');
+            }
+          });
+          video.play();
+          placeholder?.classList.add('hidden');
+        } else {
+          video.pause();
+          placeholder?.classList.remove('hidden');
+        }
+      });
+
+      video.addEventListener('ended', () => {
+        placeholder?.classList.remove('hidden');
+      });
+    });
+  </script>
+</body>
+</html>
